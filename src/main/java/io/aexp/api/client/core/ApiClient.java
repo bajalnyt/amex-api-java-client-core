@@ -156,6 +156,7 @@ public class ApiClient {
             for (Map.Entry<String, String> header : headers.entrySet()) {
                 httpPost.addHeader(header.getKey(), header.getValue());
             }
+            System.out.println(headers);
             return httpPost;
 
         } else {

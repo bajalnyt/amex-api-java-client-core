@@ -27,15 +27,39 @@ import io.aexp.api.client.core.tokenization.NotificationsRequest;
 import io.aexp.api.client.core.tokenization.ProvisioningRequest;
 import io.aexp.api.client.core.tokenization.StatusRequest;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class AmexTokenizationClient {
 
-    private static final String CLIENT_ID = "YOUR CLIENT ID";
-    private static final String CLIENT_SECRET = "YOUR CLIENT SECRET";
-    private static final String ENCRYPTION_KEY = "YOUR ENCRYPTION KEY";
-    private static final String ENCRYPTION_KID = "YOUR ENCRYPTION KEY ID";
-    private static final String TOKEN_REQUESTER_ID = "YOUR ASSIGNED TOKEN REQUESTER ID";
+    static String CLIENT_ID = "YOUR CLIENT ID";
+    static String CLIENT_SECRET = "YOUR CLIENT SECRET";
+    static String ENCRYPTION_KEY = "YOUR ENCRYPTION KEY";
+    static String ENCRYPTION_KID = "YOUR ENCRYPTION KEY ID";
+    static String TOKEN_REQUESTER_ID = "YOUR ASSIGNED TOKEN REQUESTER ID";
+
+    static {
+        try (InputStream input = new FileInputStream("/Users/211008/workspaces/research/amex-api-java-client-core/config.properties")) {
+
+            Properties prop = new Properties();
+
+            // load a properties file
+            prop.load(input);
+
+            CLIENT_ID = prop.getProperty("client.id");
+            CLIENT_SECRET = prop.getProperty("client.secret");
+            ENCRYPTION_KEY = prop.getProperty("encryption.key");
+            ENCRYPTION_KID = prop.getProperty("encryption.key.id");
+            TOKEN_REQUESTER_ID = prop.getProperty("token.requestor.id");
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+
 
     public ApiClientResponse provisioning(String accountNumber, int expiryMonth, int expiryYear, String userEmailId,
                                           String userName, String userPhone, String postalCode) {
@@ -148,29 +172,23 @@ public class AmexTokenizationClient {
         return client.execute(metaDataRequest, authProvider);
     }
 
-  public static void main(String args[]) {
+  public static void main(String[] args) {
     AmexTokenizationClient client = new AmexTokenizationClient();
 
-    ApiClientResponse response = client.provisioning("371111111111111", 12, 2020,"nobody@netcetera.com",
-      "first|middle|last", "+0011112224444", "11111");
+    ApiClientResponse response = client.provisioning(
+            "371111111111111",
+            12,
+            2020,
+            "",
+            "first|middle|last",
+            "+0011112224444",
+            ""
+    );
     System.out.println("Answer=" + response.toJson());
     System.out.println("TokenData=" + response.getDecryptedField(ENCRYPTION_KEY, "secure_token_data"));
+    //System.out.println(client.notifications("4444", NotificationType.RESUME).toJson());
+    //System.out.println(client.metadata("379970315676848").toJson());
+    //System.out.println(client.status("124123").toJson());
   }
-////
-//  public static void main(String args[]) {
-//    AmexTokenizationClient client = new AmexTokenizationClient();
-//    System.out.println(client.metadata("379970315676848").toJson());
-//  }
 
-
-//    public static void main(String args[]) {
-//      AmexTokenizationClient client = new AmexTokenizationClient();
-//      System.out.println(client.status("124123").toJson());
-//    }
-
-
-    /*  public static void main(String args[]) {
-        AmexTokenizationClient client = new AmexTokenizationClient();
-        System.out.println(client.notifications("4444", NotificationType.RESUME).toJson());
-      }*/
 }

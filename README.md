@@ -1,5 +1,16 @@
 # amex-api-java-client-core
 
+##### To validate Network tokens using Amex
+To execute the tokenization class `AmexTokenizationClient`, please keep a config.properties file with following values.  
+The values can be obtained from our vault.
+```
+client.id
+client.secret
+encryption.key.id=
+token.requestor.id=
+encryption.key=
+```
+
 This library encapsulates header creation necessary to authenticate with APIs published to the [Amex for Developers](https://developer.americanexpress.com) portal.
 
 ## Usage
